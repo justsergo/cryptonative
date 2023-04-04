@@ -1,37 +1,20 @@
-import {createSlice, configureStore} from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
-const counterSlice = createSlice({
-  name: 'counter',
+const userSlice = createSlice({
+  name: 'user',
   initialState: {
-    value: 0,
+    token: '',
   },
   reducers: {
-    incremented: state => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1;
+    logIn(state, action) {
+      state.token = 'action.payload.token';
     },
-    decremented: state => {
-      state.value -= 1;
+    logOut(state) {
+      state.token = '';
     },
   },
 });
 
-export const {incremented, decremented} = counterSlice.actions;
+export const {logIn} = userSlice.actions;
 
-const store = configureStore({
-  reducer: counterSlice.reducer,
-});
-
-// Can still subscribe to the store
-store.subscribe(() => console.log(store.getState()));
-
-// Still pass action objects to `dispatch`, but they're created for us
-store.dispatch(incremented());
-// {value: 1}
-store.dispatch(incremented());
-// {value: 2}
-store.dispatch(decremented());
-// {value: 1}
+export default userSlice.reducer;

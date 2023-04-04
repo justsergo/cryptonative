@@ -1,15 +1,28 @@
 import React from 'react';
-import {View, Text, StyleSheet, Pressable, TextInput} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useForm, Controller} from 'react-hook-form';
+import {useDispatch} from 'react-redux';
+
+import {logIn} from '../store/reducers/userReducer';
+import Input from '../components/Input';
+import {Press} from '../components/Press';
+
 const Login = (): JSX.Element => {
   const navigation = useNavigation();
-  const {control, watch, handleSubmit} = useForm({
+  const dispatch = useDispatch();
+
+  const {
+    control,
+    watch,
+    handleSubmit,
+    formState: {isValid},
+  } = useForm({
     defaultValues: {login: '', password: ''},
   });
 
-  const onSubmit = data => {
-    console.log(data);
+  const onSubmit = (data: string) => {
+    dispatch(logIn(data));
   };
   console.log(watch('login'));
   return (
@@ -18,35 +31,27 @@ const Login = (): JSX.Element => {
       <Controller
         control={control}
         name="login"
+        rules={{required: true}}
         render={({field: {value, onChange}}) => (
-          <TextInput
-            onChangeText={onChange}
-            value={value}
-            placeholder="Login"
-          />
+          <Input onChangeText={onChange} value={value} placeholder="Login" />
         )}
       />
       <Controller
         control={control}
         name="password"
+        rules={{required: false}}
         render={({field: {value, onChange}}) => (
-          <TextInput
-            onChangeText={onChange}
-            value={value}
-            placeholder="Password"
-          />
+          <Input onChangeText={onChange} value={value} placeholder="Password" />
         )}
       />
 
-      <Pressable onPress={handleSubmit(onSubmit)}>
+      <Press disabled={!isValid} onPress={handleSubmit(onSubmit)}>
         <Text>LOG IN</Text>
-      </Pressable>
+      </Press>
 
-      <Pressable
-        onPress={() => navigation.navigate('registration')}
-        style={styles.button}>
+      <Press onPress={() => navigation.navigate('registration')}>
         <Text>Registration</Text>
-      </Pressable>
+      </Press>
     </View>
   );
 };
@@ -57,7 +62,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  button: {marginTop: 10, backgroundColor: 'red', height: 30},
 });
 
 export default Login;
